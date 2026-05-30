@@ -68,25 +68,33 @@ function Header({
 }
 
 function Intro({ onEnter }: { onEnter: () => void }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const desktopVideoRef = useRef<HTMLVideoElement>(null);
+  const mobileVideoRef = useRef<HTMLVideoElement>(null);
   const [videoReady, setVideoReady] = useState(false);
 
-  useEffect(() => {
-    const video = videoRef.current;
+  function playIntroVideo(video: HTMLVideoElement | null) {
     if (!video) return;
 
     video.muted = true;
+    video.defaultMuted = true;
     video.playsInline = true;
     video.removeAttribute("controls");
     video.setAttribute("muted", "");
     video.setAttribute("playsinline", "");
     video.setAttribute("webkit-playsinline", "");
     video.play().catch(() => {});
+  }
+
+  useEffect(() => {
+    playIntroVideo(desktopVideoRef.current);
+    playIntroVideo(mobileVideoRef.current);
   }, []);
+
+  const videoClassName = `pointer-events-none absolute inset-0 z-0 h-full w-full object-cover transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"}`;
 
   return (
     <motion.section
-      className="video-fallback fixed inset-0 z-[60] grid min-h-screen place-items-center overflow-hidden bg-ink text-paper"
+      className="fixed inset-0 z-[60] grid min-h-screen place-items-center overflow-hidden bg-ink text-paper"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -94,8 +102,8 @@ function Intro({ onEnter }: { onEnter: () => void }) {
       aria-label="Idlewild Coffee video intro"
     >
       <video
-        ref={videoRef}
-        className={`pointer-events-none absolute inset-0 z-0 h-full w-full object-cover transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"}`}
+        ref={desktopVideoRef}
+        className={`${videoClassName} hidden md:block`}
         autoPlay
         muted
         loop
@@ -105,14 +113,33 @@ function Intro({ onEnter }: { onEnter: () => void }) {
         disablePictureInPicture
         controlsList="nodownload nofullscreen noplaybackrate"
         aria-hidden="true"
-        onCanPlay={() => setVideoReady(true)}
+        onLoadedMetadata={() => playIntroVideo(desktopVideoRef.current)}
+        onCanPlay={() => {
+          setVideoReady(true);
+          playIntroVideo(desktopVideoRef.current);
+        }}
       >
-        <source
-          src="/videos/mobile-intro.mp4.web.mp4.mp4"
-          type="video/mp4"
-          media="(max-width: 768px)"
-        />
         <source src="/videos/hero-intro.mp4.web.mp4" type="video/mp4" />
+      </video>
+      <video
+        ref={mobileVideoRef}
+        className={`${videoClassName} block md:hidden`}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        controls={false}
+        disablePictureInPicture
+        controlsList="nodownload nofullscreen noplaybackrate"
+        aria-hidden="true"
+        onLoadedMetadata={() => playIntroVideo(mobileVideoRef.current)}
+        onCanPlay={() => {
+          setVideoReady(true);
+          playIntroVideo(mobileVideoRef.current);
+        }}
+      >
+        <source src="/videos/mobile-intro.mp4.web.mp4.mp4" type="video/mp4" />
       </video>
       <div
         className="pointer-events-none absolute inset-0 z-10 bg-black/40"
@@ -136,7 +163,7 @@ function Intro({ onEnter }: { onEnter: () => void }) {
       </motion.div>
       <motion.button
         onClick={onEnter}
-        className="focus-ring relative z-30 rounded-full border-2 border-paper bg-transparent px-8 py-3 text-sm font-black uppercase tracking-[0.28em] text-paper transition-colors hover:bg-paper hover:text-ink sm:px-12 sm:py-4 sm:text-lg"
+        className="focus-ring relative z-30 rounded-full border-2 border-paper bg-transparent px-4 py-1.5 text-xs font-black uppercase tracking-[0.22em] text-paper transition-colors hover:bg-paper hover:text-ink sm:px-6 sm:py-2 sm:text-sm"
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         whileHover={{ scale: 1.045 }}
