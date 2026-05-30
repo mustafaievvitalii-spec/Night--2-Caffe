@@ -77,16 +77,7 @@ body {
   }
 }
 
-.video-fallback {
-  background-image:
-    linear-gradient(rgba(7, 26, 61, 0.34), rgba(7, 26, 61, 0.62)),
-    url("https://images.squarespace-cdn.com/content/v1/57b1331e3e00be9be5f117b5/af602ede-bc87-478f-9542-48d24609ce56/1J2A0999.jpg");
-  background-position: center;
-  background-size: cover;
-}
-
 .focus-ring:focus-visible {
   outline: 3px solid #ff4bc1;
   outline-offset: 4px;
 }
-

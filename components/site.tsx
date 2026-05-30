@@ -142,7 +142,7 @@ function Intro({ onEnter }: { onEnter: () => void }) {
           playIntroVideo(desktopVideoRef.current);
         }}
       >
-        <source src="/videos/hero-intro.mp4.web.mp4" type="video/mp4" />
+        <source src="/video/hero-intro.mp4.web.mp4" type="video/mp4" />
       </video>
       <video
         ref={mobileVideoRef}
@@ -155,7 +155,7 @@ function Intro({ onEnter }: { onEnter: () => void }) {
           playIntroVideo(mobileVideoRef.current);
         }}
       >
-        <source src="/videos/mobile-intro.mp4.web.mp4.mp4" type="video/mp4" />
+        <source src="/video/mobile-intro.mp4.web.mp4.mp4" type="video/mp4" />
       </video>
       <div
         className="pointer-events-none absolute inset-0 z-10 bg-black/40"
@@ -168,7 +168,7 @@ function Intro({ onEnter }: { onEnter: () => void }) {
         transition={{ delay: 0.15, duration: 0.7 }}
       >
         <Image
-          src="/videos/logos/Logohero1.png"
+          src="/image/Logohero1.png"
           alt="Idlewild Coffee"
           width={320}
           height={160}
