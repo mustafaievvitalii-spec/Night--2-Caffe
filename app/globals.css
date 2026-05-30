@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --font-display: 'Arial Black';
-  --font-sans: 'Inter';
+  --font-display: "Arial Black";
+  --font-sans: "Inter";
   color: #071a3d;
   background: #fffdf8;
 }
@@ -20,8 +20,19 @@ html {
 body {
   margin: 0;
   background:
-    radial-gradient(circle at top left, rgba(255, 75, 193, 0.08), transparent 28rem),
+    linear-gradient(rgba(7, 26, 61, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(7, 26, 61, 0.035) 1px, transparent 1px),
+    radial-gradient(
+      circle at top left,
+      rgba(255, 75, 193, 0.07),
+      transparent 28rem
+    ),
     linear-gradient(180deg, #fffdf8 0%, #fffdf8 62%, #f5f1e9 100%);
+  background-size:
+    64px 64px,
+    64px 64px,
+    auto,
+    auto;
   color: #071a3d;
   font-family: var(--font-sans), Arial, sans-serif;
 }
@@ -32,7 +43,7 @@ body {
 }
 
 .noise::before {
-  content: '';
+  content: "";
   pointer-events: none;
   position: fixed;
   inset: 0;
@@ -58,14 +69,18 @@ body {
 }
 
 @keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 .video-fallback {
   background-image:
-    linear-gradient(rgba(7, 26, 61, .34), rgba(7, 26, 61, .62)),
-    url('https://images.squarespace-cdn.com/content/v1/57b1331e3e00be9be5f117b5/af602ede-bc87-478f-9542-48d24609ce56/1J2A0999.jpg');
+    linear-gradient(rgba(7, 26, 61, 0.34), rgba(7, 26, 61, 0.62)),
+    url("https://images.squarespace-cdn.com/content/v1/57b1331e3e00be9be5f117b5/af602ede-bc87-478f-9542-48d24609ce56/1J2A0999.jpg");
   background-position: center;
   background-size: cover;
 }
@@ -74,3 +89,4 @@ body {
   outline: 3px solid #ff4bc1;
   outline-offset: 4px;
 }
+
