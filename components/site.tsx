@@ -7,7 +7,7 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { locations, menu, products, Product } from "@/lib/data";
 
 type CartItem = Product & { quantity: number; option?: string };
@@ -35,11 +35,11 @@ function Header({
   return (
     <header className="sticky top-0 z-40 border-b border-ink/15 bg-paper/90 backdrop-blur-xl">
       <nav
-        className="mx-auto flex max-w-[1440px] items-center justify-between px-4 py-4 sm:px-6 lg:px-10"
+        className="mx-auto flex max-w-[1440px] items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4 lg:px-10"
         aria-label="Primary navigation"
       >
         <a
-          className="focus-ring text-2xl font-black uppercase tracking-[-0.12em] transition hover:text-magenta sm:text-3xl"
+          className="focus-ring text-xl font-black uppercase tracking-[-0.12em] transition hover:text-magenta sm:text-3xl"
           href="#top"
           aria-label="Idlewild home"
         >
@@ -58,7 +58,7 @@ function Header({
         </div>
         <button
           onClick={onCart}
-          className="focus-ring rounded-full border border-ink/60 px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.24em] transition hover:border-ink hover:bg-ink hover:text-paper"
+          className="focus-ring shrink-0 rounded-full border border-ink/60 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] transition hover:border-ink hover:bg-ink hover:text-paper sm:px-5 sm:py-2.5 sm:text-[11px] sm:tracking-[0.24em]"
         >
           Cart / {cartCount}
         </button>
@@ -68,9 +68,25 @@ function Header({
 }
 
 function Intro({ onEnter }: { onEnter: () => void }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoReady, setVideoReady] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.playsInline = true;
+    video.removeAttribute("controls");
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+    video.play().catch(() => {});
+  }, []);
+
   return (
     <motion.section
-      className="fixed inset-0 z-[60] grid min-h-screen place-items-center overflow-hidden bg-ink text-paper"
+      className="video-fallback fixed inset-0 z-[60] grid min-h-screen place-items-center overflow-hidden bg-ink text-paper"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -78,19 +94,32 @@ function Intro({ onEnter }: { onEnter: () => void }) {
       aria-label="Idlewild Coffee video intro"
     >
       <video
-        className="absolute inset-0 h-full w-full object-cover"
+        ref={videoRef}
+        className={`pointer-events-none absolute inset-0 z-0 h-full w-full object-cover transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"}`}
         autoPlay
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="auto"
+        controls={false}
+        disablePictureInPicture
+        controlsList="nodownload nofullscreen noplaybackrate"
         aria-hidden="true"
+        onCanPlay={() => setVideoReady(true)}
       >
+        <source
+          src="/videos/mobile-intro.mp4.web.mp4.mp4"
+          type="video/mp4"
+          media="(max-width: 768px)"
+        />
         <source src="/videos/hero-intro.mp4.web.mp4" type="video/mp4" />
       </video>
-      <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
+      <div
+        className="pointer-events-none absolute inset-0 z-10 bg-black/40"
+        aria-hidden="true"
+      />
       <motion.div
-        className="absolute inset-x-0 top-10 z-10 flex justify-center px-4"
+        className="absolute inset-x-0 top-10 z-20 flex justify-center px-4"
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15, duration: 0.7 }}
@@ -107,7 +136,7 @@ function Intro({ onEnter }: { onEnter: () => void }) {
       </motion.div>
       <motion.button
         onClick={onEnter}
-        className="focus-ring relative z-10 rounded-full border-2 border-paper bg-transparent px-16 py-6 text-xl font-black uppercase tracking-[0.34em] text-paper transition-colors hover:bg-paper hover:text-ink sm:px-24 sm:py-8 sm:text-2xl"
+        className="focus-ring relative z-30 rounded-full border-2 border-paper bg-transparent px-8 py-3 text-sm font-black uppercase tracking-[0.28em] text-paper transition-colors hover:bg-paper hover:text-ink sm:px-12 sm:py-4 sm:text-lg"
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         whileHover={{ scale: 1.045 }}
@@ -126,7 +155,7 @@ function Hero() {
   return (
     <section
       id="top"
-      className="relative min-h-screen overflow-hidden border-b border-ink/15 bg-paper px-4 py-12 sm:px-6 lg:px-10"
+      className="relative overflow-hidden border-b border-ink/15 bg-paper px-4 py-16 sm:px-6 sm:py-20 lg:min-h-screen lg:px-10"
     >
       <motion.div
         style={{ y }}
@@ -134,7 +163,7 @@ function Hero() {
       >
         AUS
       </motion.div>
-      <div className="mx-auto grid max-w-[1440px] gap-10 pt-12 lg:grid-cols-[1.12fr_.88fr] lg:items-end lg:pt-20">
+      <div className="mx-auto grid max-w-[1440px] gap-8 lg:grid-cols-[1.12fr_.88fr] lg:items-end lg:pt-20">
         <motion.div
           initial="hidden"
           animate="visible"
@@ -153,7 +182,7 @@ function Hero() {
               Since the in-between
             </span>
           </div>
-          <h2 className="display-type max-w-6xl text-[21vw] leading-[.72] text-ink sm:text-[15vw] lg:text-[9.6rem] xl:text-[11rem]">
+          <h2 className="display-type max-w-6xl text-[18vw] leading-[.78] text-ink sm:text-[15vw] sm:leading-[.72] lg:text-[9.6rem] xl:text-[11rem]">
             Coffee for the in-between.
           </h2>
           <div className="mt-10 grid gap-8 border-t border-ink/20 pt-8 md:grid-cols-[.72fr_1fr]">
@@ -171,7 +200,7 @@ function Hero() {
           initial={{ opacity: 0, y: 24, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ delay: 0.12, duration: 0.7 }}
-          className="group relative min-h-[520px] overflow-hidden bg-ink lg:min-h-[690px]"
+          className="group relative min-h-[360px] overflow-hidden bg-ink sm:min-h-[520px] lg:min-h-[690px]"
         >
           <Image
             src="https://images.squarespace-cdn.com/content/v1/57b1331e3e00be9be5f117b5/af602ede-bc87-478f-9542-48d24609ce56/1J2A0999.jpg"
@@ -209,7 +238,7 @@ function SectionTitle({ eyebrow, title }: { eyebrow: string; title: string }) {
       <p className="text-[11px] font-black uppercase tracking-[0.34em] text-magenta">
         {eyebrow}
       </p>
-      <h2 className="display-type text-6xl leading-[.78] sm:text-8xl lg:text-[9rem]">
+      <h2 className="display-type text-5xl leading-[.78] sm:text-8xl lg:text-[9rem]">
         {title}
       </h2>
     </motion.div>
@@ -220,7 +249,7 @@ function Locations() {
   return (
     <section
       id="locations"
-      className="border-b border-ink/15 px-4 py-24 sm:px-6 lg:px-10 lg:py-32"
+      className="scroll-mt-20 border-b border-ink/15 px-4 py-16 sm:px-6 sm:py-24 lg:px-10 lg:py-32"
     >
       <div className="mx-auto max-w-[1440px]">
         <SectionTitle eyebrow="Hello" title="Pull up." />
@@ -230,16 +259,17 @@ function Locations() {
               key={location.title}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.25 }}
               variants={fadeUp}
               transition={{ delay: index * 0.08, duration: 0.55 }}
               className="group grid overflow-hidden border border-ink/20 bg-paper transition duration-300 hover:-translate-y-1 hover:border-ink md:grid-rows-[minmax(420px,58vh)_auto]"
             >
-              <div className="relative min-h-[360px] overflow-hidden bg-ink md:min-h-[520px]">
+              <div className="relative min-h-[300px] overflow-hidden bg-ink sm:min-h-[420px] md:min-h-[520px]">
                 <Image
                   src={location.image}
                   alt={`${location.title} Idlewild Coffee location`}
                   fill
+                  priority={index === 0}
                   sizes="(min-width: 1024px) 50vw, 100vw"
                   className="object-cover transition duration-700 group-hover:scale-[1.045]"
                 />
@@ -544,7 +574,7 @@ export default function Site() {
     setEntered(true);
     window.requestAnimationFrame(() => {
       document
-        .getElementById("top")
+        .getElementById("locations")
         ?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }
@@ -573,8 +603,8 @@ export default function Site() {
         onCart={() => setCartOpen(true)}
       />
       <main>
-        <Hero />
         <Locations />
+        <Hero />
         <CoffeeMenu />
         <Merch onAdd={addToCart} />
       </main>
