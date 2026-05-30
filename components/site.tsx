@@ -59,21 +59,20 @@ function Intro({ onEnter }: { onEnter: () => void }) {
       </video>
       <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
       <motion.div
-        className="absolute inset-x-0 top-10 z-10 flex justify-center px-4 sm:top-12"
+        className="absolute inset-x-0 top-10 z-10 flex justify-center px-4"
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15, duration: 0.7 }}
       >
-        <div className="relative h-24 w-[220px] sm:h-28 sm:w-[260px] lg:h-36 lg:w-[320px]">
-          <Image
-            src="/videos/logos/Logohero.png"
-            alt="Idlewild Coffee"
-            fill
-            priority
-            sizes="(min-width: 1024px) 320px, (min-width: 640px) 260px, 220px"
-            className="object-contain"
-          />
-        </div>
+        <Image
+          src="/videos/logos/Logohero1.png"
+          alt="Idlewild Coffee"
+          width={320}
+          height={160}
+          priority
+          sizes="(min-width: 1024px) 320px, (min-width: 640px) 260px, 200px"
+          className="h-auto w-[200px] object-contain sm:w-[260px] lg:w-[320px]"
+        />
       </motion.div>
       <motion.button
         onClick={onEnter}
