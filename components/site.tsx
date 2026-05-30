@@ -64,7 +64,16 @@ function Intro({ onEnter }: { onEnter: () => void }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15, duration: 0.7 }}
       >
-        <Logo className="text-5xl leading-none text-paper sm:text-7xl md:text-8xl" />
+        <div className="relative h-24 w-[220px] sm:h-28 sm:w-[260px] lg:h-36 lg:w-[320px]">
+          <Image
+            src="/videos/logos/Logohero.png"
+            alt="Idlewild Coffee"
+            fill
+            priority
+            sizes="(min-width: 1024px) 320px, (min-width: 640px) 260px, 220px"
+            className="object-contain"
+          />
+        </div>
       </motion.div>
       <motion.button
         onClick={onEnter}
