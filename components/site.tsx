@@ -76,20 +76,12 @@ function Intro({ onEnter }: { onEnter: () => void }) {
     if (!video) return;
 
     video.muted = true;
-    video.defaultMuted = true;
     video.playsInline = true;
+    video.removeAttribute("controls");
     video.setAttribute("muted", "");
     video.setAttribute("playsinline", "");
     video.setAttribute("webkit-playsinline", "");
-
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        // Mobile browsers require muted inline playback; attributes above keep retry safe.
-        video.muted = true;
-        void video.play().catch(() => undefined);
-      });
-    }
+    video.play().catch(() => {});
   }, []);
 
   return (
@@ -103,7 +95,7 @@ function Intro({ onEnter }: { onEnter: () => void }) {
     >
       <video
         ref={videoRef}
-        className={`pointer-events-none absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"}`}
+        className={`pointer-events-none absolute inset-0 z-0 h-full w-full object-cover transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"}`}
         autoPlay
         muted
         loop
@@ -111,18 +103,23 @@ function Intro({ onEnter }: { onEnter: () => void }) {
         preload="auto"
         controls={false}
         disablePictureInPicture
-        controlsList="nodownload nofullscreen noremoteplayback"
+        controlsList="nodownload nofullscreen noplaybackrate"
         aria-hidden="true"
         onCanPlay={() => setVideoReady(true)}
       >
+        <source
+          src="/videos/mobile-intro.mp4.web.mp4.mp4"
+          type="video/mp4"
+          media="(max-width: 768px)"
+        />
         <source src="/videos/hero-intro.mp4.web.mp4" type="video/mp4" />
       </video>
       <div
-        className="pointer-events-none absolute inset-0 bg-black/40"
+        className="pointer-events-none absolute inset-0 z-10 bg-black/40"
         aria-hidden="true"
       />
       <motion.div
-        className="absolute inset-x-0 top-10 z-10 flex justify-center px-4"
+        className="absolute inset-x-0 top-10 z-20 flex justify-center px-4"
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15, duration: 0.7 }}
@@ -139,7 +136,7 @@ function Intro({ onEnter }: { onEnter: () => void }) {
       </motion.div>
       <motion.button
         onClick={onEnter}
-        className="focus-ring relative z-20 rounded-full border-2 border-paper bg-transparent px-16 py-6 text-xl font-black uppercase tracking-[0.34em] text-paper transition-colors hover:bg-paper hover:text-ink sm:px-24 sm:py-8 sm:text-2xl"
+        className="focus-ring relative z-30 rounded-full border-2 border-paper bg-transparent px-8 py-3 text-sm font-black uppercase tracking-[0.28em] text-paper transition-colors hover:bg-paper hover:text-ink sm:px-12 sm:py-4 sm:text-lg"
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         whileHover={{ scale: 1.045 }}
