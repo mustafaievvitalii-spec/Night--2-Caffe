@@ -86,11 +86,41 @@ function Intro({ onEnter }: { onEnter: () => void }) {
   }
 
   useEffect(() => {
-    playIntroVideo(desktopVideoRef.current);
-    playIntroVideo(mobileVideoRef.current);
+    const playAllIntroVideos = () => {
+      playIntroVideo(desktopVideoRef.current);
+      playIntroVideo(mobileVideoRef.current);
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) playAllIntroVideos();
+    };
+
+    playAllIntroVideos();
+    window.addEventListener("touchstart", playAllIntroVideos, {
+      once: true,
+      passive: true,
+    });
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("touchstart", playAllIntroVideos);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
 
-  const videoClassName = `pointer-events-none absolute inset-0 z-0 h-full w-full object-cover transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"}`;
+  const introVideoProps = {
+    autoPlay: true,
+    muted: true,
+    defaultMuted: true,
+    loop: true,
+    playsInline: true,
+    preload: "auto",
+    controls: false,
+    disablePictureInPicture: true,
+    controlsList: "nodownload nofullscreen noplaybackrate",
+  };
+
+  const videoClassName = `pointer-events-none absolute inset-0 z-0 h-full w-full select-none object-cover transition-opacity duration-700 [-webkit-user-select:none] ${videoReady ? "opacity-100" : "opacity-0"}`;
 
   return (
     <motion.section
@@ -104,14 +134,7 @@ function Intro({ onEnter }: { onEnter: () => void }) {
       <video
         ref={desktopVideoRef}
         className={`${videoClassName} hidden md:block`}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        controls={false}
-        disablePictureInPicture
-        controlsList="nodownload nofullscreen noplaybackrate"
+        {...introVideoProps}
         aria-hidden="true"
         onLoadedMetadata={() => playIntroVideo(desktopVideoRef.current)}
         onCanPlay={() => {
@@ -124,14 +147,7 @@ function Intro({ onEnter }: { onEnter: () => void }) {
       <video
         ref={mobileVideoRef}
         className={`${videoClassName} block md:hidden`}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        controls={false}
-        disablePictureInPicture
-        controlsList="nodownload nofullscreen noplaybackrate"
+        {...introVideoProps}
         aria-hidden="true"
         onLoadedMetadata={() => playIntroVideo(mobileVideoRef.current)}
         onCanPlay={() => {
@@ -625,25 +641,29 @@ export default function Site() {
       <AnimatePresence>
         {!entered && <Intro onEnter={enterSite} />}
       </AnimatePresence>
-      <Header
-        cartCount={items.reduce((sum, item) => sum + item.quantity, 0)}
-        onCart={() => setCartOpen(true)}
-      />
-      <main>
-        <Locations />
-        <Hero />
-        <CoffeeMenu />
-        <Merch onAdd={addToCart} />
-      </main>
-      <Footer />
-      <MiniCart
-        open={cartOpen}
-        items={items}
-        onClose={() => setCartOpen(false)}
-        onRemove={(id) =>
-          setItems((current) => current.filter((item) => item.id !== id))
-        }
-      />
+      {entered ? (
+        <>
+          <Header
+            cartCount={items.reduce((sum, item) => sum + item.quantity, 0)}
+            onCart={() => setCartOpen(true)}
+          />
+          <main>
+            <Locations />
+            <Hero />
+            <CoffeeMenu />
+            <Merch onAdd={addToCart} />
+          </main>
+          <Footer />
+          <MiniCart
+            open={cartOpen}
+            items={items}
+            onClose={() => setCartOpen(false)}
+            onRemove={(id) =>
+              setItems((current) => current.filter((item) => item.id !== id))
+            }
+          />
+        </>
+      ) : null}
     </>
   );
 }
