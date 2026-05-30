@@ -39,34 +39,44 @@ function Header({ cartCount, onCart }: { cartCount: number; onCart: () => void }
 function Intro({ onEnter }: { onEnter: () => void }) {
   return (
     <motion.section
-      className="video-fallback fixed inset-0 z-[60] grid min-h-screen place-items-center overflow-hidden bg-ink text-paper"
-      exit={{ opacity: 0, scale: 1.04, filter: 'blur(8px)' }}
-      transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
-      aria-label="Idlewild Coffee intro"
+      className="fixed inset-0 z-[60] grid min-h-screen place-items-center overflow-hidden bg-ink text-paper"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+      aria-label="Idlewild Coffee video intro"
     >
-      <video className="absolute inset-0 h-full w-full object-cover opacity-70" autoPlay muted loop playsInline poster="https://images.squarespace-cdn.com/content/v1/57b1331e3e00be9be5f117b5/af602ede-bc87-478f-9542-48d24609ce56/1J2A0999.jpg">
-        <source src="https://cdn.coverr.co/videos/coverr-making-coffee-1568/1080p.mp4" type="video/mp4" />
-      </video>
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,26,61,.25),rgba(7,26,61,.72))]" />
-      <motion.div
-        className="relative z-10 flex flex-col items-center px-4 text-center"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
+      <video
+        className="absolute inset-0 h-full w-full object-cover"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
       >
-        <motion.h1 className="display-type text-[18vw] leading-[.72] sm:text-[14vw]" whileHover={{ scaleX: 1.06, scaleY: 0.96 }} transition={{ type: 'spring', stiffness: 160, damping: 18 }}>
-          IDLEWILD
-        </motion.h1>
-        <p className="mt-5 text-sm font-black uppercase tracking-[0.5em] sm:text-lg">Coffee + Culture</p>
-        <p className="mt-3 text-xs font-bold uppercase tracking-[0.38em] text-paper/80">Austin, Texas</p>
-        <button onClick={onEnter} className="focus-ring group mt-10 rounded-full border-2 border-paper px-10 py-4 text-sm font-black uppercase tracking-[0.32em] transition hover:bg-paper hover:text-ink">
-          Enter <span className="inline-block transition group-hover:translate-x-1">→</span>
-        </button>
+        <source src="/videos/hero-intro.mp4.web.mp4" type="video/mp4" />
+      </video>
+      <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
+      <motion.div
+        className="absolute inset-x-0 top-10 z-10 flex justify-center px-4 sm:top-12"
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15, duration: 0.7 }}
+      >
+        <Logo className="text-5xl leading-none text-paper sm:text-7xl md:text-8xl" />
       </motion.div>
-      <div className="absolute bottom-5 left-0 flex w-[200%] gap-8 whitespace-nowrap text-xs font-black uppercase tracking-[0.25em] opacity-80 marquee">
-        <span>coffee prep / austin light / skate footage / people working / cafe atmosphere / </span>
-        <span>coffee prep / austin light / skate footage / people working / cafe atmosphere / </span>
-      </div>
+      <motion.button
+        onClick={onEnter}
+        className="focus-ring relative z-10 rounded-full border-2 border-paper bg-transparent px-16 py-6 text-xl font-black uppercase tracking-[0.34em] text-paper transition-colors hover:bg-paper hover:text-ink sm:px-24 sm:py-8 sm:text-2xl"
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        whileHover={{ scale: 1.045 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ delay: 0.28, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+      >
+        HELLO
+      </motion.button>
     </motion.section>
   );
 }
@@ -244,6 +254,13 @@ export default function Site() {
   const [cartOpen, setCartOpen] = useState(false);
   const [items, setItems] = useState<CartItem[]>([]);
 
+  function enterSite() {
+    setEntered(true);
+    window.requestAnimationFrame(() => {
+      document.getElementById('top')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
   function addToCart(product: Product) {
     setItems((current) => {
       const existing = current.find((item) => item.id === product.id);
@@ -255,7 +272,7 @@ export default function Site() {
 
   return (
     <>
-      <AnimatePresence>{!entered && <Intro onEnter={() => setEntered(true)} />}</AnimatePresence>
+      <AnimatePresence>{!entered && <Intro onEnter={enterSite} />}</AnimatePresence>
       <Header cartCount={items.reduce((sum, item) => sum + item.quantity, 0)} onCart={() => setCartOpen(true)} />
       <main>
         <Hero />
